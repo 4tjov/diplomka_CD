@@ -1,0 +1,321 @@
+MultiToken.transferAsset(MultiToken.Asset,address) (slither/MultiToken/contracts/MultiToken.sol#41-63) ignores return value by token.transfer(_dest,_asset.amount) (slither/MultiToken/contracts/MultiToken.sol#44)
+MultiToken.transferAssetFrom(MultiToken.Asset,address,address) (slither/MultiToken/contracts/MultiToken.sol#72-98) ignores return value by token.transferFrom(_source,_dest,_asset.amount) (slither/MultiToken/contracts/MultiToken.sol#79)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unchecked-transfer
+
+PWNDeed.acceptOffer(uint256,bytes32,address) (slither/pwn_contracts/contracts/PWNDeed.sol#247-266) uses a dangerous strict equality:
+        - require(bool,string)(getDeedStatus(_did) == 1,Deed can't accept more offers) (slither/pwn_contracts/contracts/PWNDeed.sol#256)
+PWNDeed.makeOffer(address,uint256,address,uint256,uint256) (slither/pwn_contracts/contracts/PWNDeed.sol#182-213) uses a dangerous strict equality:
+        - require(bool,string)(getDeedStatus(_did) == 1,Deed not accepting offers) (slither/pwn_contracts/contracts/PWNDeed.sol#189)
+PWNDeed.repayLoan(uint256) (slither/pwn_contracts/contracts/PWNDeed.sol#273-282) uses a dangerous strict equality:
+        - require(bool,string)(getDeedStatus(_did) == 2,Deed doesn't have an accepted offer to be paid back) (slither/pwn_contracts/contracts/PWNDeed.sol#274-277)
+PWNDeed.revoke(uint256,address) (slither/pwn_contracts/contracts/PWNDeed.sol#156-169) uses a dangerous strict equality:
+        - require(bool,string)(getDeedStatus(_did) == 1,Deed can't be revoked at this stage) (slither/pwn_contracts/contracts/PWNDeed.sol#161-164)
+PWNDeed.revokeOffer(bytes32,address) (slither/pwn_contracts/contracts/PWNDeed.sol#225-238) uses a dangerous strict equality:
+        - require(bool,string)(getDeedStatus(offers[_offer].did) == 1,Can only remove offers from open Deeds) (slither/pwn_contracts/contracts/PWNDeed.sol#230-233)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Reentrancy in PWNDeed.create(address,MultiToken.Category,uint32,uint256,uint256,address) (slither/pwn_contracts/contracts/PWNDeed.sol#117-148):
+        External calls:
+        - _mint(_owner,id,1,) (slither/pwn_contracts/contracts/PWNDeed.sol#134)
+                - IERC1155Receiver(to).onERC1155Received(operator,from,id,amount,data) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#470-478)
+        State variables written after the call(s):
+        - deed.status = 1 (slither/pwn_contracts/contracts/PWNDeed.sol#136)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1
+
+ERC1155._doSafeBatchTransferAcceptanceCheck(address,address,address,uint256[],uint256[],bytes).response (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#492) is a local variable never initialized
+ERC1155._doSafeBatchTransferAcceptanceCheck(address,address,address,uint256[],uint256[],bytes).reason (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#497) is a local variable never initialized
+ERC1155._doSafeTransferAcceptanceCheck(address,address,address,uint256,uint256,bytes).response (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#470) is a local variable never initialized
+PWN.acceptOffer(bytes32).collateral (slither/pwn_contracts/contracts/PWN.sol#132) is a local variable never initialized
+ERC1155._doSafeTransferAcceptanceCheck(address,address,address,uint256,uint256,bytes).reason (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#474) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables
+
+MultiToken.approveAsset(MultiToken.Asset,address) (slither/MultiToken/contracts/MultiToken.sol#135-148) ignores return value by token.approve(_target,_asset.amount) (slither/MultiToken/contracts/MultiToken.sol#138)
+ERC1155._doSafeTransferAcceptanceCheck(address,address,address,uint256,uint256,bytes) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#461-480) ignores return value by IERC1155Receiver(to).onERC1155Received(operator,from,id,amount,data) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#470-478)
+ERC1155._doSafeBatchTransferAcceptanceCheck(address,address,address,uint256[],uint256[],bytes) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#482-503) ignores return value by IERC1155Receiver(to).onERC1155BatchReceived(operator,from,ids,amounts,data) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#491-501)
+PWN.createDeed(address,MultiToken.Category,uint32,uint256,uint256) (slither/pwn_contracts/contracts/PWN.sol#50-68) ignores return value by vault.push(deed.getDeedCollateral(did),msg.sender) (slither/pwn_contracts/contracts/PWN.sol#65)
+PWN.revokeDeed(uint256) (slither/pwn_contracts/contracts/PWN.sol#75-80) ignores return value by vault.pull(deed.getDeedCollateral(_did),msg.sender) (slither/pwn_contracts/contracts/PWN.sol#77)
+PWN.acceptOffer(bytes32) (slither/pwn_contracts/contracts/PWN.sol#125-139) ignores return value by vault.pullProxy(deed.getOfferLoan(_offer),lender,msg.sender) (slither/pwn_contracts/contracts/PWN.sol#130)
+PWN.acceptOffer(bytes32) (slither/pwn_contracts/contracts/PWN.sol#125-139) ignores return value by vault.pullProxy(collateral,msg.sender,lender) (slither/pwn_contracts/contracts/PWN.sol#136)
+PWN.repayLoan(uint256) (slither/pwn_contracts/contracts/PWN.sol#149-160) ignores return value by vault.pull(deed.getDeedCollateral(_did),deed.getBorrower(_did)) (slither/pwn_contracts/contracts/PWN.sol#156)
+PWN.repayLoan(uint256) (slither/pwn_contracts/contracts/PWN.sol#149-160) ignores return value by vault.push(loan,msg.sender) (slither/pwn_contracts/contracts/PWN.sol#157)
+PWN.claimDeed(uint256) (slither/pwn_contracts/contracts/PWN.sol#168-186) ignores return value by vault.pull(loan,msg.sender) (slither/pwn_contracts/contracts/PWN.sol#178)
+PWN.claimDeed(uint256) (slither/pwn_contracts/contracts/PWN.sol#168-186) ignores return value by vault.pull(deed.getDeedCollateral(_did),msg.sender) (slither/pwn_contracts/contracts/PWN.sol#180)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return
+
+PWNDeed.constructor(string)._uri (slither/pwn_contracts/contracts/PWNDeed.sol#100) shadows:
+        - ERC1155._uri (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#30) (state variable)
+PWNDeed.create(address,MultiToken.Category,uint32,uint256,uint256,address)._owner (slither/pwn_contracts/contracts/PWNDeed.sol#123) shadows:
+        - Ownable._owner (slither/openzeppelin-contracts/contracts/access/Ownable.sol#21) (state variable)
+PWNDeed.revoke(uint256,address)._owner (slither/pwn_contracts/contracts/PWNDeed.sol#156) shadows:
+        - Ownable._owner (slither/openzeppelin-contracts/contracts/access/Ownable.sol#21) (state variable)
+PWNDeed.acceptOffer(uint256,bytes32,address)._owner (slither/pwn_contracts/contracts/PWNDeed.sol#250) shadows:
+        - Ownable._owner (slither/openzeppelin-contracts/contracts/access/Ownable.sol#21) (state variable)
+PWNDeed.claim(uint256,address)._owner (slither/pwn_contracts/contracts/PWNDeed.sol#290) shadows:
+        - Ownable._owner (slither/openzeppelin-contracts/contracts/access/Ownable.sol#21) (state variable)
+PWNDeed.burn(uint256,address)._owner (slither/pwn_contracts/contracts/PWNDeed.sol#305) shadows:
+        - Ownable._owner (slither/openzeppelin-contracts/contracts/access/Ownable.sol#21) (state variable)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing
+
+PWNDeed.setPWN(address) (slither/pwn_contracts/contracts/PWNDeed.sol#462-464) should emit an event for: 
+        - PWN = _address (slither/pwn_contracts/contracts/PWNDeed.sol#463) 
+PWNVault.setPWN(address) (slither/pwn_contracts/contracts/PWNVault.sol#155-157) should emit an event for: 
+        - PWN = _address (slither/pwn_contracts/contracts/PWNVault.sol#156) 
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-events-access-control
+
+PWNDeed.setPWN(address)._address (slither/pwn_contracts/contracts/PWNDeed.sol#462) lacks a zero-check on :
+                - PWN = _address (slither/pwn_contracts/contracts/PWNDeed.sol#463)
+PWNVault.setPWN(address)._address (slither/pwn_contracts/contracts/PWNVault.sol#155) lacks a zero-check on :
+                - PWN = _address (slither/pwn_contracts/contracts/PWNVault.sol#156)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-zero-address-validation
+
+Variable 'ERC1155._doSafeTransferAcceptanceCheck(address,address,address,uint256,uint256,bytes).response (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#470)' in ERC1155._doSafeTransferAcceptanceCheck(address,address,address,uint256,uint256,bytes) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#461-480) potentially used before declaration: response != IERC1155Receiver.onERC1155Received.selector (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#471)
+Variable 'ERC1155._doSafeTransferAcceptanceCheck(address,address,address,uint256,uint256,bytes).reason (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#474)' in ERC1155._doSafeTransferAcceptanceCheck(address,address,address,uint256,uint256,bytes) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#461-480) potentially used before declaration: revert(string)(reason) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#475)
+Variable 'ERC1155._doSafeBatchTransferAcceptanceCheck(address,address,address,uint256[],uint256[],bytes).response (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#492)' in ERC1155._doSafeBatchTransferAcceptanceCheck(address,address,address,uint256[],uint256[],bytes) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#482-503) potentially used before declaration: response != IERC1155Receiver.onERC1155BatchReceived.selector (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#494)
+Variable 'ERC1155._doSafeBatchTransferAcceptanceCheck(address,address,address,uint256[],uint256[],bytes).reason (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#497)' in ERC1155._doSafeBatchTransferAcceptanceCheck(address,address,address,uint256[],uint256[],bytes) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#482-503) potentially used before declaration: revert(string)(reason) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#498)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#pre-declaration-usage-of-local-variables
+
+Reentrancy in PWNDeed.create(address,MultiToken.Category,uint32,uint256,uint256,address) (slither/pwn_contracts/contracts/PWNDeed.sol#117-148):
+        External calls:
+        - _mint(_owner,id,1,) (slither/pwn_contracts/contracts/PWNDeed.sol#134)
+                - IERC1155Receiver(to).onERC1155Received(operator,from,id,amount,data) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#470-478)
+        Event emitted after the call(s):
+        - DeedCreated(_assetAddress,_assetCategory,_assetId,_assetAmount,_duration,id) (slither/pwn_contracts/contracts/PWNDeed.sol#138-145)
+Reentrancy in PWNVault.pull(MultiToken.Asset,address) (slither/pwn_contracts/contracts/PWNVault.sol#75-83):
+        External calls:
+        - _asset.transferAsset(_beneficiary) (slither/pwn_contracts/contracts/PWNVault.sol#80)
+        Event emitted after the call(s):
+        - VaultPull(_asset,_beneficiary) (slither/pwn_contracts/contracts/PWNVault.sol#81)
+Reentrancy in PWNVault.pullProxy(MultiToken.Asset,address,address) (slither/pwn_contracts/contracts/PWNVault.sol#94-102):
+        External calls:
+        - _asset.transferAssetFrom(_origin,_beneficiary) (slither/pwn_contracts/contracts/PWNVault.sol#99)
+        Event emitted after the call(s):
+        - VaultProxy(_asset,_origin,_beneficiary) (slither/pwn_contracts/contracts/PWNVault.sol#100)
+Reentrancy in PWNVault.push(MultiToken.Asset,address) (slither/pwn_contracts/contracts/PWNVault.sol#57-65):
+        External calls:
+        - _asset.transferAssetFrom(_origin,address(this)) (slither/pwn_contracts/contracts/PWNVault.sol#62)
+        Event emitted after the call(s):
+        - VaultPush(_asset,_origin) (slither/pwn_contracts/contracts/PWNVault.sol#63)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
+
+PWNDeed.revoke(uint256,address) (slither/pwn_contracts/contracts/PWNDeed.sol#156-169) uses timestamp for comparisons
+        Dangerous comparisons:
+        - require(bool,string)(getDeedStatus(_did) == 1,Deed can't be revoked at this stage) (slither/pwn_contracts/contracts/PWNDeed.sol#161-164)
+PWNDeed.makeOffer(address,uint256,address,uint256,uint256) (slither/pwn_contracts/contracts/PWNDeed.sol#182-213) uses timestamp for comparisons
+        Dangerous comparisons:
+        - require(bool,string)(getDeedStatus(_did) == 1,Deed not accepting offers) (slither/pwn_contracts/contracts/PWNDeed.sol#189)
+PWNDeed.revokeOffer(bytes32,address) (slither/pwn_contracts/contracts/PWNDeed.sol#225-238) uses timestamp for comparisons
+        Dangerous comparisons:
+        - require(bool,string)(getDeedStatus(offers[_offer].did) == 1,Can only remove offers from open Deeds) (slither/pwn_contracts/contracts/PWNDeed.sol#230-233)
+PWNDeed.acceptOffer(uint256,bytes32,address) (slither/pwn_contracts/contracts/PWNDeed.sol#247-266) uses timestamp for comparisons
+        Dangerous comparisons:
+        - require(bool,string)(getDeedStatus(_did) == 1,Deed can't accept more offers) (slither/pwn_contracts/contracts/PWNDeed.sol#256)
+PWNDeed.repayLoan(uint256) (slither/pwn_contracts/contracts/PWNDeed.sol#273-282) uses timestamp for comparisons
+        Dangerous comparisons:
+        - require(bool,string)(getDeedStatus(_did) == 2,Deed doesn't have an accepted offer to be paid back) (slither/pwn_contracts/contracts/PWNDeed.sol#274-277)
+PWNDeed.claim(uint256,address) (slither/pwn_contracts/contracts/PWNDeed.sol#290-297) uses timestamp for comparisons
+        Dangerous comparisons:
+        - require(bool,string)(getDeedStatus(_did) >= 3,Deed can't be claimed yet) (slither/pwn_contracts/contracts/PWNDeed.sol#292)
+PWNDeed.burn(uint256,address) (slither/pwn_contracts/contracts/PWNDeed.sol#305-311) uses timestamp for comparisons
+        Dangerous comparisons:
+        - require(bool,string)(deeds[_did].status == 0,Deed can't be burned at this stage) (slither/pwn_contracts/contracts/PWNDeed.sol#307)
+PWNDeed.getDeedStatus(uint256) (slither/pwn_contracts/contracts/PWNDeed.sol#327-337) uses timestamp for comparisons
+        Dangerous comparisons:
+        - deeds[_did].expiration > 0 && deeds[_did].expiration < block.timestamp && deeds[_did].status != 3 (slither/pwn_contracts/contracts/PWNDeed.sol#329-331)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Void constructor called in PWNVault.constructor() (slither/pwn_contracts/contracts/PWNVault.sol#48):
+        - IERC1155Receiver() (slither/pwn_contracts/contracts/PWNVault.sol#48)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#void-constructor
+
+Address.verifyCallResult(bool,bytes,string) (slither/openzeppelin-contracts/contracts/utils/Address.sol#201-221) uses assembly
+        - INLINE ASM (slither/openzeppelin-contracts/contracts/utils/Address.sol#213-216)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage
+
+Different versions of Solidity is used:
+        - Version used: ['^0.8.0', '^0.8.1']
+        - ^0.8.0 (slither/MultiToken/contracts/MultiToken.sol#3)
+        - ^0.8.0 (slither/openzeppelin-contracts/contracts/access/Ownable.sol#4)
+        - ^0.8.0 (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#4)
+        - ^0.8.0 (slither/openzeppelin-contracts/contracts/token/ERC1155/IERC1155.sol#4)
+        - ^0.8.0 (slither/openzeppelin-contracts/contracts/token/ERC1155/IERC1155Receiver.sol#4)
+        - ^0.8.0 (slither/openzeppelin-contracts/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol#4)
+        - ^0.8.0 (slither/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)
+        - ^0.8.0 (slither/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol#4)
+        - ^0.8.1 (slither/openzeppelin-contracts/contracts/utils/Address.sol#4)
+        - ^0.8.0 (slither/openzeppelin-contracts/contracts/utils/Context.sol#4)
+        - ^0.8.0 (slither/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol#4)
+        - ^0.8.0 (slither/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)
+        - ^0.8.0 (slither/pwn_contracts/contracts/PWN.sol#3)
+        - ^0.8.0 (slither/pwn_contracts/contracts/PWNDeed.sol#3)
+        - ^0.8.0 (slither/pwn_contracts/contracts/PWNVault.sol#3)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#different-pragma-directives-are-used
+
+Address.functionCall(address,bytes) (slither/openzeppelin-contracts/contracts/utils/Address.sol#85-87) is never used and should be removed
+Address.functionCall(address,bytes,string) (slither/openzeppelin-contracts/contracts/utils/Address.sol#95-101) is never used and should be removed
+Address.functionCallWithValue(address,bytes,uint256) (slither/openzeppelin-contracts/contracts/utils/Address.sol#114-120) is never used and should be removed
+Address.functionCallWithValue(address,bytes,uint256,string) (slither/openzeppelin-contracts/contracts/utils/Address.sol#128-139) is never used and should be removed
+Address.functionDelegateCall(address,bytes) (slither/openzeppelin-contracts/contracts/utils/Address.sol#174-176) is never used and should be removed
+Address.functionDelegateCall(address,bytes,string) (slither/openzeppelin-contracts/contracts/utils/Address.sol#184-193) is never used and should be removed
+Address.functionStaticCall(address,bytes) (slither/openzeppelin-contracts/contracts/utils/Address.sol#147-149) is never used and should be removed
+Address.functionStaticCall(address,bytes,string) (slither/openzeppelin-contracts/contracts/utils/Address.sol#157-166) is never used and should be removed
+Address.sendValue(address,uint256) (slither/openzeppelin-contracts/contracts/utils/Address.sol#60-65) is never used and should be removed
+Address.verifyCallResult(bool,bytes,string) (slither/openzeppelin-contracts/contracts/utils/Address.sol#201-221) is never used and should be removed
+Context._msgData() (slither/openzeppelin-contracts/contracts/utils/Context.sol#21-23) is never used and should be removed
+ERC1155._burnBatch(address,uint256[],uint256[]) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#360-386) is never used and should be removed
+ERC1155._mintBatch(address,uint256[],uint256[],bytes) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#297-319) is never used and should be removed
+MultiToken.approveAsset(MultiToken.Asset,address) (slither/MultiToken/contracts/MultiToken.sol#135-148) is never used and should be removed
+MultiToken.balanceOf(MultiToken.Asset,address) (slither/MultiToken/contracts/MultiToken.sol#106-127) is never used and should be removed
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dead-code
+
+Pragma version^0.8.0 (slither/MultiToken/contracts/MultiToken.sol#3) allows old versions
+Pragma version^0.8.0 (slither/openzeppelin-contracts/contracts/access/Ownable.sol#4) allows old versions
+Pragma version^0.8.0 (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#4) allows old versions
+Pragma version^0.8.0 (slither/openzeppelin-contracts/contracts/token/ERC1155/IERC1155.sol#4) allows old versions
+Pragma version^0.8.0 (slither/openzeppelin-contracts/contracts/token/ERC1155/IERC1155Receiver.sol#4) allows old versions
+Pragma version^0.8.0 (slither/openzeppelin-contracts/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol#4) allows old versions
+Pragma version^0.8.0 (slither/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4) allows old versions
+Pragma version^0.8.0 (slither/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol#4) allows old versions
+Pragma version^0.8.1 (slither/openzeppelin-contracts/contracts/utils/Address.sol#4) allows old versions
+Pragma version^0.8.0 (slither/openzeppelin-contracts/contracts/utils/Context.sol#4) allows old versions
+Pragma version^0.8.0 (slither/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol#4) allows old versions
+Pragma version^0.8.0 (slither/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4) allows old versions
+Pragma version^0.8.0 (slither/pwn_contracts/contracts/PWN.sol#3) allows old versions
+Pragma version^0.8.0 (slither/pwn_contracts/contracts/PWNDeed.sol#3) allows old versions
+Pragma version^0.8.0 (slither/pwn_contracts/contracts/PWNVault.sol#3) allows old versions
+solc-0.8.13 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity
+
+Low level call in Address.sendValue(address,uint256) (slither/openzeppelin-contracts/contracts/utils/Address.sol#60-65):
+        - (success) = recipient.call{value: amount}() (slither/openzeppelin-contracts/contracts/utils/Address.sol#63)
+Low level call in Address.functionCallWithValue(address,bytes,uint256,string) (slither/openzeppelin-contracts/contracts/utils/Address.sol#128-139):
+        - (success,returndata) = target.call{value: value}(data) (slither/openzeppelin-contracts/contracts/utils/Address.sol#137)
+Low level call in Address.functionStaticCall(address,bytes,string) (slither/openzeppelin-contracts/contracts/utils/Address.sol#157-166):
+        - (success,returndata) = target.staticcall(data) (slither/openzeppelin-contracts/contracts/utils/Address.sol#164)
+Low level call in Address.functionDelegateCall(address,bytes,string) (slither/openzeppelin-contracts/contracts/utils/Address.sol#184-193):
+        - (success,returndata) = target.delegatecall(data) (slither/openzeppelin-contracts/contracts/utils/Address.sol#191)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+
+Parameter MultiToken.transferAsset(MultiToken.Asset,address)._asset (slither/MultiToken/contracts/MultiToken.sol#41) is not in mixedCase
+Parameter MultiToken.transferAsset(MultiToken.Asset,address)._dest (slither/MultiToken/contracts/MultiToken.sol#41) is not in mixedCase
+Parameter MultiToken.transferAssetFrom(MultiToken.Asset,address,address)._asset (slither/MultiToken/contracts/MultiToken.sol#73) is not in mixedCase
+Parameter MultiToken.transferAssetFrom(MultiToken.Asset,address,address)._source (slither/MultiToken/contracts/MultiToken.sol#74) is not in mixedCase
+Parameter MultiToken.transferAssetFrom(MultiToken.Asset,address,address)._dest (slither/MultiToken/contracts/MultiToken.sol#75) is not in mixedCase
+Parameter MultiToken.balanceOf(MultiToken.Asset,address)._asset (slither/MultiToken/contracts/MultiToken.sol#106) is not in mixedCase
+Parameter MultiToken.balanceOf(MultiToken.Asset,address)._target (slither/MultiToken/contracts/MultiToken.sol#106) is not in mixedCase
+Parameter MultiToken.approveAsset(MultiToken.Asset,address)._asset (slither/MultiToken/contracts/MultiToken.sol#135) is not in mixedCase
+Parameter MultiToken.approveAsset(MultiToken.Asset,address)._target (slither/MultiToken/contracts/MultiToken.sol#135) is not in mixedCase
+Parameter PWN.createDeed(address,MultiToken.Category,uint32,uint256,uint256)._assetAddress (slither/pwn_contracts/contracts/PWN.sol#51) is not in mixedCase
+Parameter PWN.createDeed(address,MultiToken.Category,uint32,uint256,uint256)._assetCategory (slither/pwn_contracts/contracts/PWN.sol#52) is not in mixedCase
+Parameter PWN.createDeed(address,MultiToken.Category,uint32,uint256,uint256)._duration (slither/pwn_contracts/contracts/PWN.sol#53) is not in mixedCase
+Parameter PWN.createDeed(address,MultiToken.Category,uint32,uint256,uint256)._assetId (slither/pwn_contracts/contracts/PWN.sol#54) is not in mixedCase
+Parameter PWN.createDeed(address,MultiToken.Category,uint32,uint256,uint256)._assetAmount (slither/pwn_contracts/contracts/PWN.sol#55) is not in mixedCase
+Parameter PWN.revokeDeed(uint256)._did (slither/pwn_contracts/contracts/PWN.sol#75) is not in mixedCase
+Parameter PWN.makeOffer(address,uint256,uint256,uint256)._assetAddress (slither/pwn_contracts/contracts/PWN.sol#94) is not in mixedCase
+Parameter PWN.makeOffer(address,uint256,uint256,uint256)._assetAmount (slither/pwn_contracts/contracts/PWN.sol#95) is not in mixedCase
+Parameter PWN.makeOffer(address,uint256,uint256,uint256)._did (slither/pwn_contracts/contracts/PWN.sol#96) is not in mixedCase
+Parameter PWN.makeOffer(address,uint256,uint256,uint256)._toBePaid (slither/pwn_contracts/contracts/PWN.sol#97) is not in mixedCase
+Parameter PWN.revokeOffer(bytes32)._offer (slither/pwn_contracts/contracts/PWN.sol#114) is not in mixedCase
+Parameter PWN.acceptOffer(bytes32)._offer (slither/pwn_contracts/contracts/PWN.sol#125) is not in mixedCase
+Parameter PWN.repayLoan(uint256)._did (slither/pwn_contracts/contracts/PWN.sol#149) is not in mixedCase
+Parameter PWN.claimDeed(uint256)._did (slither/pwn_contracts/contracts/PWN.sol#168) is not in mixedCase
+Parameter PWNDeed.create(address,MultiToken.Category,uint32,uint256,uint256,address)._assetAddress (slither/pwn_contracts/contracts/PWNDeed.sol#118) is not in mixedCase
+Parameter PWNDeed.create(address,MultiToken.Category,uint32,uint256,uint256,address)._assetCategory (slither/pwn_contracts/contracts/PWNDeed.sol#119) is not in mixedCase
+Parameter PWNDeed.create(address,MultiToken.Category,uint32,uint256,uint256,address)._duration (slither/pwn_contracts/contracts/PWNDeed.sol#120) is not in mixedCase
+Parameter PWNDeed.create(address,MultiToken.Category,uint32,uint256,uint256,address)._assetId (slither/pwn_contracts/contracts/PWNDeed.sol#121) is not in mixedCase
+Parameter PWNDeed.create(address,MultiToken.Category,uint32,uint256,uint256,address)._assetAmount (slither/pwn_contracts/contracts/PWNDeed.sol#122) is not in mixedCase
+Parameter PWNDeed.create(address,MultiToken.Category,uint32,uint256,uint256,address)._owner (slither/pwn_contracts/contracts/PWNDeed.sol#123) is not in mixedCase
+Parameter PWNDeed.revoke(uint256,address)._did (slither/pwn_contracts/contracts/PWNDeed.sol#156) is not in mixedCase
+Parameter PWNDeed.revoke(uint256,address)._owner (slither/pwn_contracts/contracts/PWNDeed.sol#156) is not in mixedCase
+Parameter PWNDeed.makeOffer(address,uint256,address,uint256,uint256)._assetAddress (slither/pwn_contracts/contracts/PWNDeed.sol#183) is not in mixedCase
+Parameter PWNDeed.makeOffer(address,uint256,address,uint256,uint256)._assetAmount (slither/pwn_contracts/contracts/PWNDeed.sol#184) is not in mixedCase
+Parameter PWNDeed.makeOffer(address,uint256,address,uint256,uint256)._lender (slither/pwn_contracts/contracts/PWNDeed.sol#185) is not in mixedCase
+Parameter PWNDeed.makeOffer(address,uint256,address,uint256,uint256)._did (slither/pwn_contracts/contracts/PWNDeed.sol#186) is not in mixedCase
+Parameter PWNDeed.makeOffer(address,uint256,address,uint256,uint256)._toBePaid (slither/pwn_contracts/contracts/PWNDeed.sol#187) is not in mixedCase
+Parameter PWNDeed.revokeOffer(bytes32,address)._offer (slither/pwn_contracts/contracts/PWNDeed.sol#225) is not in mixedCase
+Parameter PWNDeed.revokeOffer(bytes32,address)._lender (slither/pwn_contracts/contracts/PWNDeed.sol#225) is not in mixedCase
+Parameter PWNDeed.acceptOffer(uint256,bytes32,address)._did (slither/pwn_contracts/contracts/PWNDeed.sol#248) is not in mixedCase
+Parameter PWNDeed.acceptOffer(uint256,bytes32,address)._offer (slither/pwn_contracts/contracts/PWNDeed.sol#249) is not in mixedCase
+Parameter PWNDeed.acceptOffer(uint256,bytes32,address)._owner (slither/pwn_contracts/contracts/PWNDeed.sol#250) is not in mixedCase
+Parameter PWNDeed.repayLoan(uint256)._did (slither/pwn_contracts/contracts/PWNDeed.sol#273) is not in mixedCase
+Parameter PWNDeed.claim(uint256,address)._did (slither/pwn_contracts/contracts/PWNDeed.sol#290) is not in mixedCase
+Parameter PWNDeed.claim(uint256,address)._owner (slither/pwn_contracts/contracts/PWNDeed.sol#290) is not in mixedCase
+Parameter PWNDeed.burn(uint256,address)._did (slither/pwn_contracts/contracts/PWNDeed.sol#305) is not in mixedCase
+Parameter PWNDeed.burn(uint256,address)._owner (slither/pwn_contracts/contracts/PWNDeed.sol#305) is not in mixedCase
+Parameter PWNDeed.getDeedStatus(uint256)._did (slither/pwn_contracts/contracts/PWNDeed.sol#327) is not in mixedCase
+Parameter PWNDeed.getExpiration(uint256)._did (slither/pwn_contracts/contracts/PWNDeed.sol#346) is not in mixedCase
+Parameter PWNDeed.getDuration(uint256)._did (slither/pwn_contracts/contracts/PWNDeed.sol#356) is not in mixedCase
+Parameter PWNDeed.getBorrower(uint256)._did (slither/pwn_contracts/contracts/PWNDeed.sol#366) is not in mixedCase
+Parameter PWNDeed.getDeedCollateral(uint256)._did (slither/pwn_contracts/contracts/PWNDeed.sol#376) is not in mixedCase
+Parameter PWNDeed.getOffers(uint256)._did (slither/pwn_contracts/contracts/PWNDeed.sol#390) is not in mixedCase
+Parameter PWNDeed.getAcceptedOffer(uint256)._did (slither/pwn_contracts/contracts/PWNDeed.sol#401) is not in mixedCase
+Parameter PWNDeed.getDeedID(bytes32)._offer (slither/pwn_contracts/contracts/PWNDeed.sol#415) is not in mixedCase
+Parameter PWNDeed.getOfferLoan(bytes32)._offer (slither/pwn_contracts/contracts/PWNDeed.sol#425) is not in mixedCase
+Parameter PWNDeed.toBePaid(bytes32)._offer (slither/pwn_contracts/contracts/PWNDeed.sol#439) is not in mixedCase
+Parameter PWNDeed.getLender(bytes32)._offer (slither/pwn_contracts/contracts/PWNDeed.sol#449) is not in mixedCase
+Parameter PWNDeed.setPWN(address)._address (slither/pwn_contracts/contracts/PWNDeed.sol#462) is not in mixedCase
+Parameter PWNDeed.setUri(string)._newUri (slither/pwn_contracts/contracts/PWNDeed.sol#471) is not in mixedCase
+Variable PWNDeed.PWN (slither/pwn_contracts/contracts/PWNDeed.sol#14) is not in mixedCase
+Parameter PWNVault.push(MultiToken.Asset,address)._asset (slither/pwn_contracts/contracts/PWNVault.sol#57) is not in mixedCase
+Parameter PWNVault.push(MultiToken.Asset,address)._origin (slither/pwn_contracts/contracts/PWNVault.sol#57) is not in mixedCase
+Parameter PWNVault.pull(MultiToken.Asset,address)._asset (slither/pwn_contracts/contracts/PWNVault.sol#75) is not in mixedCase
+Parameter PWNVault.pull(MultiToken.Asset,address)._beneficiary (slither/pwn_contracts/contracts/PWNVault.sol#75) is not in mixedCase
+Parameter PWNVault.pullProxy(MultiToken.Asset,address,address)._asset (slither/pwn_contracts/contracts/PWNVault.sol#95) is not in mixedCase
+Parameter PWNVault.pullProxy(MultiToken.Asset,address,address)._origin (slither/pwn_contracts/contracts/PWNVault.sol#96) is not in mixedCase
+Parameter PWNVault.pullProxy(MultiToken.Asset,address,address)._beneficiary (slither/pwn_contracts/contracts/PWNVault.sol#97) is not in mixedCase
+Parameter PWNVault.setPWN(address)._address (slither/pwn_contracts/contracts/PWNVault.sol#155) is not in mixedCase
+Variable PWNVault.PWN (slither/pwn_contracts/contracts/PWNVault.sol#16) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions
+
+Variable MultiToken.transferAssetFrom(MultiToken.Asset,address,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#81) is too similar to MultiToken.transferAssetFrom(MultiToken.Asset,address,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#84)
+Variable MultiToken.transferAssetFrom(MultiToken.Asset,address,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#81) is too similar to MultiToken.transferAsset(MultiToken.Asset,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#49)
+Variable MultiToken.transferAsset(MultiToken.Asset,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#46) is too similar to MultiToken.transferAsset(MultiToken.Asset,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#49)
+Variable MultiToken.transferAssetFrom(MultiToken.Asset,address,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#81) is too similar to MultiToken.balanceOf(MultiToken.Asset,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#122)
+Variable MultiToken.transferAsset(MultiToken.Asset,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#46) is too similar to MultiToken.transferAssetFrom(MultiToken.Asset,address,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#84)
+Variable MultiToken.balanceOf(MultiToken.Asset,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#115) is too similar to MultiToken.transferAsset(MultiToken.Asset,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#49)
+Variable MultiToken.approveAsset(MultiToken.Asset,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#140) is too similar to MultiToken.transferAsset(MultiToken.Asset,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#49)
+Variable MultiToken.approveAsset(MultiToken.Asset,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#140) is too similar to MultiToken.transferAssetFrom(MultiToken.Asset,address,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#84)
+Variable MultiToken.approveAsset(MultiToken.Asset,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#140) is too similar to MultiToken.approveAsset(MultiToken.Asset,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#143)
+Variable MultiToken.transferAsset(MultiToken.Asset,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#46) is too similar to MultiToken.approveAsset(MultiToken.Asset,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#143)
+Variable MultiToken.transferAssetFrom(MultiToken.Asset,address,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#81) is too similar to MultiToken.approveAsset(MultiToken.Asset,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#143)
+Variable MultiToken.approveAsset(MultiToken.Asset,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#140) is too similar to MultiToken.balanceOf(MultiToken.Asset,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#122)
+Variable MultiToken.balanceOf(MultiToken.Asset,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#115) is too similar to MultiToken.transferAssetFrom(MultiToken.Asset,address,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#84)
+Variable MultiToken.transferAsset(MultiToken.Asset,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#46) is too similar to MultiToken.balanceOf(MultiToken.Asset,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#122)
+Variable MultiToken.balanceOf(MultiToken.Asset,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#115) is too similar to MultiToken.approveAsset(MultiToken.Asset,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#143)
+Variable MultiToken.balanceOf(MultiToken.Asset,address).token_scope_0 (slither/MultiToken/contracts/MultiToken.sol#115) is too similar to MultiToken.balanceOf(MultiToken.Asset,address).token_scope_1 (slither/MultiToken/contracts/MultiToken.sol#122)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#variable-names-are-too-similar
+
+renounceOwnership() should be declared external:
+        - Ownable.renounceOwnership() (slither/openzeppelin-contracts/contracts/access/Ownable.sol#54-56)
+transferOwnership(address) should be declared external:
+        - Ownable.transferOwnership(address) (slither/openzeppelin-contracts/contracts/access/Ownable.sol#62-65)
+uri(uint256) should be declared external:
+        - ERC1155.uri(uint256) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#59-61)
+balanceOfBatch(address[],uint256[]) should be declared external:
+        - ERC1155.balanceOfBatch(address[],uint256[]) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#82-98)
+setApprovalForAll(address,bool) should be declared external:
+        - ERC1155.setApprovalForAll(address,bool) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#103-105)
+safeTransferFrom(address,address,uint256,uint256,bytes) should be declared external:
+        - ERC1155.safeTransferFrom(address,address,uint256,uint256,bytes) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#117-129)
+safeBatchTransferFrom(address,address,uint256[],uint256[],bytes) should be declared external:
+        - ERC1155.safeBatchTransferFrom(address,address,uint256[],uint256[],bytes) (slither/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#134-146)
+getExpiration(uint256) should be declared external:
+        - PWNDeed.getExpiration(uint256) (slither/pwn_contracts/contracts/PWNDeed.sol#346-348)
+getDuration(uint256) should be declared external:
+        - PWNDeed.getDuration(uint256) (slither/pwn_contracts/contracts/PWNDeed.sol#356-358)
+getBorrower(uint256) should be declared external:
+        - PWNDeed.getBorrower(uint256) (slither/pwn_contracts/contracts/PWNDeed.sol#366-368)
+getDeedCollateral(uint256) should be declared external:
+        - PWNDeed.getDeedCollateral(uint256) (slither/pwn_contracts/contracts/PWNDeed.sol#376-382)
+getOffers(uint256) should be declared external:
+        - PWNDeed.getOffers(uint256) (slither/pwn_contracts/contracts/PWNDeed.sol#390-392)
+getAcceptedOffer(uint256) should be declared external:
+        - PWNDeed.getAcceptedOffer(uint256) (slither/pwn_contracts/contracts/PWNDeed.sol#401-403)
+getDeedID(bytes32) should be declared external:
+        - PWNDeed.getDeedID(bytes32) (slither/pwn_contracts/contracts/PWNDeed.sol#415-417)
+getOfferLoan(bytes32) should be declared external:
+        - PWNDeed.getOfferLoan(bytes32) (slither/pwn_contracts/contracts/PWNDeed.sol#425-431)
+toBePaid(bytes32) should be declared external:
+        - PWNDeed.toBePaid(bytes32) (slither/pwn_contracts/contracts/PWNDeed.sol#439-441)
+getLender(bytes32) should be declared external:
+        - PWNDeed.getLender(bytes32) (slither/pwn_contracts/contracts/PWNDeed.sol#449-451)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external
